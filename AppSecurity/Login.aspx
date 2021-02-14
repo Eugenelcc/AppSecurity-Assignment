@@ -1,10 +1,15 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Login.aspx.cs" Inherits="AppSecurity.Login" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     <h2>Login</h2>
-      <p class="text-danger">
-        <asp:Literal runat="server" ID="lit_error" />
-    </p>
-   <script src="https://www.google.com/recaptcha/api.js?render=6LcMxkAaAAAAAPKm7fvpwEd84WneorB3IZ2Igm0k"></script>
+    <!--ERROR PANEL-->
+                            <asp:Panel ID="PanelErrorResult" Visible="false" runat="server" CssClass="alert alert-dismissable alert-danger">
+                            <button type="button" class="close" data-dismiss="alert">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <asp:Label ID="Lbl_err" runat="server"></asp:Label>
+                            </asp:Panel>
+                             <!--ERROR PANEL-->
+   
 
     <div class="row">
         <div class="col-md-8">
@@ -49,7 +54,8 @@
                 
             </section>
         </div>
- 
+ 
+
          
     </div>
 </asp:Content>

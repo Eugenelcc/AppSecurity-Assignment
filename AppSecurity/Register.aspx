@@ -55,7 +55,7 @@
 
      </script>
 
-       <script src="https://www.google.com/recaptcha/api.js?render=6LcMxkAaAAAAAPKm7fvpwEd84WneorB3IZ2Igm0k"></script>
+     
 
 </head>
 <body>
@@ -102,10 +102,14 @@
         </div>
         <div class="container body-content">
              <h2>Registration</h2>
-    <p class="text-danger">
-        <asp:Literal runat="server" ID="ErrorMessage" />
-    </p>
-
+    <!--ERROR PANEL-->
+                            <asp:Panel ID="PanelErrorResult" Visible="false" runat="server" CssClass="alert alert-dismissable alert-danger">
+                            <button type="button" class="close" data-dismiss="alert">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <asp:Label ID="Lbl_err" runat="server"></asp:Label>
+                            </asp:Panel>
+                             <!--ERROR PANEL-->
     <div class="form-horizontal">
         <h4>Create a new account</h4>
         <hr />
@@ -196,13 +200,7 @@
                 <p>&copy; <%: DateTime.Now.Year %> - My ASP.NET Application</p>
             </footer>
         </div>
-         <script>
-             grecaptcha.ready(function () {
-                 grecaptcha.execute('6LcMxkAaAAAAAPKm7fvpwEd84WneorB3IZ2Igm0k', { action: 'Login' }).then(function (token) {
-                     document.getElementById("g-recaptcha-response").value = token;
-                 });
-             });
-         </script>
+        
     </form>
 </body>
 </html>

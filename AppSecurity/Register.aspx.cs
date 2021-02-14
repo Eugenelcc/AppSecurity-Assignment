@@ -35,7 +35,7 @@ namespace AppSecurity
 
         protected void btnRegister_Click(object sender, EventArgs e)
         {
-            if (ValidateCaptcha()) {  
+               
             validate();
 
 
@@ -60,7 +60,7 @@ namespace AppSecurity
 
 
             CreateAccount();
-            }
+             
         }
 
 
@@ -213,42 +213,7 @@ namespace AppSecurity
             return score;
         }
 
-        public bool ValidateCaptcha()
-        {
-            bool result = true;
-
-
-            string captchaResponse = Request.Form["g-recaptcha-response"];
-
-
-            HttpWebRequest req = (HttpWebRequest)WebRequest.Create
-
-            (" https://www.google.com/recaptcha/api/siteverify?secret=6LcQr0kaAAAAALLWaYqVgCfWhIbXhOCXIUACkjRo &response=" + captchaResponse);
-
-            try
-            {
-                using (WebResponse wResponse = req.GetResponse())
-                {
-                    using (StreamReader readStream = new StreamReader(wResponse.GetResponseStream()))
-                    {
-                        string jsonResponse = readStream.ReadToEnd();
-
-
-
-                        JavaScriptSerializer js = new JavaScriptSerializer();
-
-                        MyObject jsonObject = js.Deserialize<MyObject>(jsonResponse);
-
-                        result = Convert.ToBoolean(jsonObject.success);//
-                    }
-                }
-                return result;
-            }
-            catch (WebException ex)
-            {
-                throw ex;
-            }
-        }
+       
     }
 
 

@@ -27,10 +27,10 @@ namespace AppSecurity
         protected void Page_Load(object sender, EventArgs e)
         {
 
-            lit_error.Text = "";
+
             if (!IsPostBack)
             {
-                if(Request.Cookies["Email"] !=null && Request.Cookies["Pass"] != null)
+                if (Request.Cookies["Email"] != null && Request.Cookies["Pass"] != null)
                 {
                     tbEmail_login.Text = Request.Cookies["Email"].Value;
                     tbPassword_login.Text = Request.Cookies["Pass"].Value;
@@ -40,62 +40,66 @@ namespace AppSecurity
 
         protected void Btn_login_Click(object sender, EventArgs e)
         {
-            if (ValidateCaptcha()) {  
-         
-            string pwd = tbPassword_login.Text.ToString().Trim();
-            string email = tbEmail_login.Text.ToString().Trim();
-            SHA512Managed hashing = new SHA512Managed();
-            string dbHash = getDBHash(email);
-            string dbSalt = getDBSalt(email);
-            try
-            {
-                if (dbSalt != null && dbSalt.Length > 0 && dbHash != null && dbHash.Length > 0)
-                {
-                    string pwdWithSalt = pwd + dbSalt;
-                    byte[] hashWithSalt = hashing.ComputeHash(Encoding.UTF8.GetBytes(pwdWithSalt));
-                    string userHash = Convert.ToBase64String(hashWithSalt);
-                    if (userHash.Equals(dbHash))
-                    {
 
-                        //RememberMe Cookie
-                        if (RememberMe.Checked)
+            if (ValidateCaptcha_v3())
+            {
+
+                string pwd = tbPassword_login.Text.ToString().Trim();
+                string email = tbEmail_login.Text.ToString().Trim();
+                SHA512Managed hashing = new SHA512Managed();
+                string dbHash = getDBHash(email);
+                string dbSalt = getDBSalt(email);
+                try
+                {
+                    if (dbSalt != null && dbSalt.Length > 0 && dbHash != null && dbHash.Length > 0)
+                    {
+                        string pwdWithSalt = pwd + dbSalt;
+                        byte[] hashWithSalt = hashing.ComputeHash(Encoding.UTF8.GetBytes(pwdWithSalt));
+                        string userHash = Convert.ToBase64String(hashWithSalt);
+                        if (userHash.Equals(dbHash))
                         {
-                            Response.Cookies["Email"].Value = tbEmail_login.Text;
-                            Response.Cookies["Pass"].Value = tbPassword_login.Text;
-                            Response.Cookies["Email"].Expires = DateTime.Now.AddMinutes(1);
-                            Response.Cookies["Pass"].Expires = DateTime.Now.AddMinutes(1);
+
+                            //RememberMe Cookie
+                            if (RememberMe.Checked)
+                            {
+                                Response.Cookies["Email"].Value = tbEmail_login.Text;
+                                Response.Cookies["Pass"].Value = tbPassword_login.Text;
+                                Response.Cookies["Email"].Expires = DateTime.Now.AddMinutes(1);
+                                Response.Cookies["Pass"].Expires = DateTime.Now.AddMinutes(1);
+
+                            }
+
+                            else
+                            {
+                                Response.Cookies["Email"].Expires = DateTime.Now.AddMinutes(-1);
+                                Response.Cookies["Pass"].Expires = DateTime.Now.AddMinutes(-1);
+                            }
+
+                            Session["email"] = tbEmail_login.Text;
+
+                            //Creating guid token
+                            string guid = Guid.NewGuid().ToString();
+                            Session["AuthToken"] = guid;
+
+                            //add cookie
+                            Response.Cookies.Add(new HttpCookie("AuthToken", guid));
+                            Response.Redirect("Default.aspx", false);
 
                         }
-
                         else
                         {
-                            Response.Cookies["Email"].Expires = DateTime.Now.AddMinutes(-1);
-                            Response.Cookies["Pass"].Expires = DateTime.Now.AddMinutes(-1);
+                            Lbl_err.Text = "Email Unauthorize";
+                            PanelErrorResult.Visible = true;
+                            Response.Redirect("Login.aspx", true);
                         }
-
-                        Session["email"] = tbEmail_login.Text;
-
-                        //Creating guid token
-                        string guid = Guid.NewGuid().ToString();
-                        Session["AuthToken"] = guid;
-
-                        //add cookie
-                        Response.Cookies.Add(new HttpCookie("AuthToken", guid));
-                        Response.Redirect("Default.aspx", false);
-                        
-                    }
-                    else
-                    {
-                        lit_error.Text = "Userid or password is not valid. Please try again.";
-                        Response.Redirect("Login.aspx", false);
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.ToString());
-            }
-            finally { }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.ToString());
+                }
+                finally { }
+
             }
         }
 
@@ -170,18 +174,22 @@ namespace AppSecurity
             return s;
         }
 
-        public bool ValidateCaptcha()
+
+
+
+        public class MyObject
+        {
+            public string success { get; set; }
+            public List<string> ErrorMessage { get; set; }
+        }
+        public bool ValidateCaptcha_v3()
         {
             bool result = true;
 
-
             string captchaResponse = Request.Form["g-recaptcha-response"];
 
-
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create
-
-            (" https://www.google.com/recaptcha/api/siteverify?secret=6LcQr0kaAAAAALLWaYqVgCfWhIbXhOCXIUACkjRo &response=" + captchaResponse);
-
+                ("https://www.google.com/recaptcha/api/siteverify?secret=6LcMxkAaAAAAAFLCkOfGG9oCXuofQ3dzmCOapIqB &response=" + captchaResponse);
             try
             {
                 using (WebResponse wResponse = req.GetResponse())
@@ -190,26 +198,23 @@ namespace AppSecurity
                     {
                         string jsonResponse = readStream.ReadToEnd();
 
-
+                        //lbl_captchaScore.Text = jsonResponse.ToString();
 
                         JavaScriptSerializer js = new JavaScriptSerializer();
 
                         MyObject jsonObject = js.Deserialize<MyObject>(jsonResponse);
 
-                        result = Convert.ToBoolean(jsonObject.success);//
+                        result = Convert.ToBoolean(jsonObject.success);
+
                     }
                 }
                 return result;
             }
+
             catch (WebException ex)
             {
                 throw ex;
             }
         }
-
-
-
-
-
     }
 }

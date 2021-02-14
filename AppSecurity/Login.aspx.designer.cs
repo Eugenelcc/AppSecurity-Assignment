@@ -15,13 +15,22 @@ namespace AppSecurity
     {
 
         /// <summary>
-        /// lit_error control.
+        /// PanelErrorResult control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal lit_error;
+        protected global::System.Web.UI.WebControls.Panel PanelErrorResult;
+
+        /// <summary>
+        /// Lbl_err control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label Lbl_err;
 
         /// <summary>
         /// tbEmail_login control.

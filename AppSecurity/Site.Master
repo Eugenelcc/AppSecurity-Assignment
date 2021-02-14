@@ -26,6 +26,10 @@
   <link href="lib/venobox/venobox.css" rel="stylesheet">
   <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
 
+    
+
+  <script src="https://www.google.com/recaptcha/api.js?render=6LcMxkAaAAAAAPKm7fvpwEd84WneorB3IZ2Igm0k"></script>
+
 
     
 </head>
@@ -95,5 +99,14 @@
         </script>
 
     </form>
+        <script>
+            grecaptcha.ready(function () {
+                grecaptcha.execute('6LcMxkAaAAAAAPKm7fvpwEd84WneorB3IZ2Igm0k', { action: 'Login' }).then(function (token) {
+                    document.getElementById("g-recaptcha-response").value = token;
+                });
+            });
+        </script>
+
+
 </body>
 </html>

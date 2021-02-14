@@ -17,7 +17,7 @@ namespace AppSecurity
 
             if (Session["Email"]!= null && Session["AuthToken"]!=null && Request.Cookies["AuthToken"]!=null)
             {
-
+                //Session != Cookie
                 if (!Session["AuthToken"].ToString().Equals(Request.Cookies["AuthToken"].Value))
                 {
                     Response.Redirect("Login.aspx", false);
